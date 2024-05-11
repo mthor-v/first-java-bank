@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 import controller.CreateUserController;
@@ -10,7 +6,12 @@ import controller.UpdateUserController;
 import controller.UsersController;
 import controller.UsersListController;
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -31,8 +32,9 @@ public class MainJFrame extends javax.swing.JFrame {
 
     public MainJFrame() {
         initComponents();
-
-        setCustomContentPanel(createPanel);
+        setIconImage(new ImageIcon(getClass().getResource("/resources/icon.png")).getImage());
+        setLogo();
+        //setCustomContentPanel(createPanel);
     }
 
     /**
@@ -50,6 +52,7 @@ public class MainJFrame extends javax.swing.JFrame {
         deleteUserBtn = new javax.swing.JButton();
         usersListBtn = new javax.swing.JButton();
         jPanelContainer = new javax.swing.JPanel();
+        logoLabel = new javax.swing.JLabel();
         jPanelTransactions = new javax.swing.JPanel();
         jButton5 = new javax.swing.JButton();
 
@@ -89,6 +92,9 @@ public class MainJFrame extends javax.swing.JFrame {
         });
 
         jPanelContainer.setPreferredSize(new java.awt.Dimension(195, 140));
+
+        logoLabel.setPreferredSize(new java.awt.Dimension(195, 140));
+        jPanelContainer.add(logoLabel);
 
         javax.swing.GroupLayout jPanelUsersLayout = new javax.swing.GroupLayout(jPanelUsers);
         jPanelUsers.setLayout(jPanelUsersLayout);
@@ -210,6 +216,8 @@ public class MainJFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MainJFrame mainFrame = new MainJFrame();
+                mainFrame.setTitle("Java Bank");
+                mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
                 UsersController usersController = new UsersController(mainFrame);
                 CreateUserController createController = new CreateUserController(createPanel);
@@ -220,7 +228,12 @@ public class MainJFrame extends javax.swing.JFrame {
         });
         
     }
-
+    
+    public void setLogo(){
+        logoLabel.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/LogoBank.png")).getImage()
+        .getScaledInstance(200, 100, 0)));
+    }
+    
     private void setCustomContentPanel(JPanel panel) {
         panel.setSize(250, 170);
         panel.setLocation(0, 0);
@@ -245,6 +258,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelContainer;
     private javax.swing.JPanel jPanelTransactions;
     private javax.swing.JPanel jPanelUsers;
+    private javax.swing.JLabel logoLabel;
     private javax.swing.JButton usersListBtn;
     // End of variables declaration//GEN-END:variables
 }
