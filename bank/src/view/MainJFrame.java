@@ -2,19 +2,17 @@ package view;
 
 import controller.CreateUserController;
 import controller.DeleteUserController;
+import controller.TransactionalController;
 import controller.UpdateUserController;
 import controller.UsersController;
 import controller.UsersListController;
 import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import model.UserDAO;
 
 /**
  *
@@ -25,16 +23,22 @@ public class MainJFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainJFrame
      */
-    private static CreateUserPanel createPanel = new CreateUserPanel();
-    private static UsersListPanel listPanel = new UsersListPanel();
-    private static DeleteUserPanel deletePanel = new DeleteUserPanel();
-    private static EditUserPanel updatePanel = new EditUserPanel();
+    private static CreateUserPanel createPanel;
+    private static UsersListPanel listPanel;
+    private static DeleteUserPanel deletePanel;
+    private static EditUserPanel updatePanel;
+    private static TransactionalPanel transactionalPanel;
 
     public MainJFrame() {
+        System.out.println("Constructor Frame");
         initComponents();
         setIconImage(new ImageIcon(getClass().getResource("/resources/icon.png")).getImage());
         setLogo();
-        //setCustomContentPanel(createPanel);
+        createPanel = new CreateUserPanel();
+        listPanel = new UsersListPanel();
+        deletePanel = new DeleteUserPanel();
+        updatePanel = new EditUserPanel();
+        
     }
 
     /**
@@ -54,7 +58,6 @@ public class MainJFrame extends javax.swing.JFrame {
         jPanelContainer = new javax.swing.JPanel();
         logoLabel = new javax.swing.JLabel();
         jPanelTransactions = new javax.swing.JPanel();
-        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 102, 255));
@@ -129,28 +132,15 @@ public class MainJFrame extends javax.swing.JFrame {
 
         jPanelTransactions.setBorder(javax.swing.BorderFactory.createTitledBorder("Transacciones"));
 
-        jButton5.setText("Salir");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanelTransactionsLayout = new javax.swing.GroupLayout(jPanelTransactions);
         jPanelTransactions.setLayout(jPanelTransactionsLayout);
         jPanelTransactionsLayout.setHorizontalGroup(
             jPanelTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTransactionsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton5)
-                .addContainerGap())
+            .addGap(0, 428, Short.MAX_VALUE)
         );
         jPanelTransactionsLayout.setVerticalGroup(
             jPanelTransactionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTransactionsLayout.createSequentialGroup()
-                .addContainerGap(100, Short.MAX_VALUE)
-                .addComponent(jButton5)
-                .addContainerGap())
+            .addGap(0, 134, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -197,12 +187,6 @@ public class MainJFrame extends javax.swing.JFrame {
         setCustomContentPanel(listPanel);
     }//GEN-LAST:event_usersListBtnActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        int confirm = JOptionPane.showConfirmDialog(this, "Está seguro de salir?");
-        if (confirm == JOptionPane.YES_OPTION) System.exit(0);
-    }//GEN-LAST:event_jButton5ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -210,21 +194,22 @@ public class MainJFrame extends javax.swing.JFrame {
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
+            System.out.println(e.getMessage());
         }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                MainJFrame mainFrame = new MainJFrame();
-                mainFrame.setTitle("Java Bank");
-                mainFrame.setLocationRelativeTo(null);
-                mainFrame.setVisible(true);
-                UsersController usersController = new UsersController(mainFrame);
-                CreateUserController createController = new CreateUserController(createPanel);
-                UsersListController listController = new UsersListController(listPanel, mainFrame);
-                DeleteUserController deleteController = new DeleteUserController(deletePanel);
-                UpdateUserController updateController = new UpdateUserController(updatePanel);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            MainJFrame mainFrame = new MainJFrame();
+            UserDAO userDAO = new UserDAO(mainFrame);
+            mainFrame.setTitle("Java Bank");
+            mainFrame.setLocationRelativeTo(null);
+            mainFrame.setVisible(true);
+            CreateUserController createController = new CreateUserController(createPanel, userDAO);
+            UsersListController listController = new UsersListController(listPanel, userDAO, mainFrame);
+            DeleteUserController deleteController = new DeleteUserController(deletePanel, userDAO);
+            UpdateUserController updateController = new UpdateUserController(updatePanel, userDAO);
+            transactionalPanel = new TransactionalPanel();
+            mainFrame.setTransactionalPanel(transactionalPanel);
+            TransactionalController transactionalController = new TransactionalController(transactionalPanel, userDAO);
         });
         
     }
@@ -245,6 +230,16 @@ public class MainJFrame extends javax.swing.JFrame {
 
         pack();
     }
+    
+    private void setTransactionalPanel(JPanel panel) {
+        panel.setSize(420, 130);
+        panel.setLocation(20, 20);
+        
+        jPanelTransactions.removeAll();
+        jPanelTransactions.add(panel, BorderLayout.CENTER);
+        jPanelTransactions.revalidate();
+        jPanelTransactions.repaint();
+    }
 
     public JButton getUsersListBtn() {
         return usersListBtn;
@@ -254,7 +249,6 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JButton createUserBtn;
     private javax.swing.JButton deleteUserBtn;
     private javax.swing.JButton editUserBtn;
-    private javax.swing.JButton jButton5;
     private javax.swing.JPanel jPanelContainer;
     private javax.swing.JPanel jPanelTransactions;
     private javax.swing.JPanel jPanelUsers;

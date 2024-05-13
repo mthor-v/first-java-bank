@@ -1,5 +1,8 @@
 package model;
 
+import com.google.gson.Gson;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -8,18 +11,29 @@ import java.sql.*;
  */
 public class DBManager {
 
-    private final String driver;
-    private final String url;
-    private final String user;
-    private final String password;
+    //private static final String dbConfigFilePath = "utils/db_config.json";
+    private static final Gson gson = new Gson();
+    private String driver;
+    private String url;
+    private String user;
+    private String password;
     private Connection conn = null;
     private Statement statement = null;
 
     public DBManager() {
-        driver = "org.postgresql.Driver";
-        url = "jdbc:postgresql://localhost:5432/bank_db";
-        user = "postgres";
-        password = "123Torre$";
+        try {
+            String currentWorkingDirectory = System.getProperty("user.dir");
+            String dbConfigFilePath = currentWorkingDirectory + "\\src\\utils\\db_config.json";
+            System.out.println(dbConfigFilePath);
+            DBConfig config = gson.fromJson(new FileReader(dbConfigFilePath), DBConfig.class);
+            driver = config.getDriver();
+            url = config.getUrl();
+            user = config.getUser();
+            password = config.getPassword();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        
     }
 
     public void dbConnect() throws Exception {

@@ -18,12 +18,13 @@ import view.UsersListPanel;
  */
 public class UsersListController implements MouseListener {
 
-    UserDAO dao = new UserDAO();
+    UserDAO dao;
     UsersListPanel listPanel = new UsersListPanel();
     DefaultTableModel tableModel = new DefaultTableModel();
     JTable genericTable = new JTable();
 
-    public UsersListController(UsersListPanel listPanel, MainJFrame mainFrame) {
+    public UsersListController(UsersListPanel listPanel, UserDAO dao, MainJFrame mainFrame) {
+        this.dao = dao;
         this.listPanel = listPanel;
         genericTable = listPanel.getUsersTable();
         mainFrame.getUsersListBtn().addMouseListener(this);

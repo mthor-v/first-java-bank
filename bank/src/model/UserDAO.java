@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import view.CreateUserPanel;
 import view.DeleteUserPanel;
@@ -15,6 +16,11 @@ import view.MainJFrame;
 public class UserDAO {
 
     DBManager dbManager = new DBManager();
+    JFrame mainFrame;
+
+    public UserDAO(JFrame frame) {
+        mainFrame = frame;
+    }
 
     public List getUsersList() throws Exception {
         List<User> usersData = new ArrayList<>();
@@ -106,7 +112,7 @@ public class UserDAO {
                 if (user.getPassword().equals(pwd)) {
                     return true;
                 }else {
-                    JOptionPane.showMessageDialog(new MainJFrame(), "Contraseña Incorrecta");
+                    JOptionPane.showMessageDialog(mainFrame, "Contraseña Incorrecta");
                     return false;
                 }
             } else {
@@ -117,5 +123,20 @@ public class UserDAO {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+    
+    // ---- Transactional methods
+    
+    public int updateBalance(Integer amount, String uid) {
+        try {
+            String query = String.format("UPDATE users SET balance = '%s' WHERE uid = '%s'",
+                    amount, uid);
+            int rowsAffected = dbManager.dbExecuteUpdate(query);
+                System.out.println("Saldo actualizado.");
+                return rowsAffected;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 }

@@ -3,7 +3,6 @@ package controller;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JOptionPane;
-import model.User;
 import model.UserDAO;
 import view.DeleteUserPanel;
 
@@ -13,11 +12,11 @@ import view.DeleteUserPanel;
  */
 public class DeleteUserController implements MouseListener {
 
-    UserDAO dao = new UserDAO();
-    User user = new User();
+    UserDAO dao;
     DeleteUserPanel deletePanel = new DeleteUserPanel();
 
-    public DeleteUserController(DeleteUserPanel deletePanel) {
+    public DeleteUserController(DeleteUserPanel deletePanel, UserDAO dao) {
+        this.dao = dao;
         this.deletePanel = deletePanel;
         this.deletePanel.getDeleteButton().addMouseListener(this);
     }

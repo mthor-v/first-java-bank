@@ -13,11 +13,12 @@ import view.CreateUserPanel;
  */
 public class CreateUserController implements MouseListener {
 
-    UserDAO dao = new UserDAO();
-    User user = new User();
+    UserDAO dao;
+    User user;
     CreateUserPanel createPanel = new CreateUserPanel();
 
-    public CreateUserController(CreateUserPanel createPanel) {
+    public CreateUserController(CreateUserPanel createPanel, UserDAO dao) {
+        this.dao = dao;
         this.createPanel = createPanel;
         this.createPanel.getRegisterBtn().addMouseListener(this);
     }
@@ -34,6 +35,7 @@ public class CreateUserController implements MouseListener {
         } else if (pwd.isEmpty() || pwd.isBlank()) {
             JOptionPane.showMessageDialog(createPanel, "Debe ingresar una contraseña.");
         } else {
+            user = new User(name, uid, pwd);
             int records = dao.createUser(user);
             if (records == 1) {
                 JOptionPane.showMessageDialog(createPanel, "Registro exitoso");

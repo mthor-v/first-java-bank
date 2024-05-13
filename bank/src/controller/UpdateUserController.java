@@ -3,7 +3,6 @@ package controller;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JOptionPane;
-import model.User;
 import model.UserDAO;
 import view.EditUserPanel;
 
@@ -13,11 +12,11 @@ import view.EditUserPanel;
  */
 public class UpdateUserController implements MouseListener {
 
-    UserDAO dao = new UserDAO();
-    User user = new User();
+    UserDAO dao;
     EditUserPanel updatePanel = new EditUserPanel();
 
-    public UpdateUserController(EditUserPanel updatePanel) {
+    public UpdateUserController(EditUserPanel updatePanel, UserDAO dao) {
+        this.dao = dao;
         this.updatePanel = updatePanel;
         this.updatePanel.getUpdateBuetton().addMouseListener(this);
     }
